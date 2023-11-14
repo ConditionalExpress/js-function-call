@@ -1,5 +1,6 @@
-// js test program
-console.clear();
+// javascript with test program
+// running on the terminal: node app.js
+//
 console.log("here we are");
 
 // open file in asynchronous way
@@ -36,6 +37,20 @@ function openCsvFile(file) {
 }
 
 function openJsonFile(file) {
+  var res = openFileSync(file);
+  console.log("json: ", res);
+  // prepare json file format; e.g. in this way
+  var data = JSON.parse(res);
+  let headers = data.headers; // .headers name; same as in data file
+  let rows = data.rows; // dto.
+  for (let j = 0; j < headers.length; j++) {
+    console.log(headers[j]);
+  }
+
+  for (let i = 0; i < rows.length; i++)
+    for (const row of rows[i]) {
+      console.log(row);
+    }
   return;
 }
 function callFunctionsByKey(key, file) {
@@ -50,18 +65,25 @@ function callFunctionsByKey(key, file) {
   // test, if key is in list
   let ret = functionList.hasOwnProperty(key);
   if (ret) {
+    // true := key found; false -> not found
     var func = functionList[key];
-    ret = func(); // call function: open...
+    ret = func(); // call function: open...File(s) from list above
   } else {
+    // or doing the default action
     console.log("error key not in list: ", key);
   }
+  return ret;
 }
 
+// ------------------------------------------------
 // now we test our work...
-let file = "./data.csv"; // test file with data
+let file = "./data.json"; // test file with data
 // key is the file extension
 let res = file.split(".");
 
 let key = res[res.length - 1]; // extension is the last occurence of this splitting
 console.log(res);
 callFunctionsByKey(key, file);
+
+//.done enf of test
+console.log("bye, bye"); // or try console.trace("my msg"); // show the callstack of modules
