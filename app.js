@@ -5,8 +5,8 @@ console.log("here we are");
 
 // open file in asynchronous way
 // return: file content
-function openFileSync() {
-  console.log("open file: ", file);
+function openFileSync(file) {
+  console.log("\nopen file: ", file);
   const fs = require("fs");
   var data = undefined; // set default value for data
   try {
@@ -89,20 +89,24 @@ function callFunctionsByKey(key, file) {
 
 // ------------------------------------------------
 // now we test our work...
-let file = "./data.json"; // test file with data
-// key is the file extension
-let res = file.split(".");
 
-let key = res[res.length - 1]; // extension is the last occurence of this splitting
-//console.log(res);
-let result = callFunctionsByKey(key, file);
-let headers = result[0];
-let rows = result[1];
-console.log(`header: ${headers}`); // result with backtick`
-let i = 0;
-for (const row of rows) {
-  console.log(`row${i++}: ${row}`);
+const files = ["./data.csv", "./data.json"]; // test file(s) with data
+// key is the file extension
+for (const file of files) {
+  let res = file.split(".");
+  let key = res[res.length - 1]; // extension is the last occurence of this splitting
+
+  //console.log(res);
+  let result = callFunctionsByKey(key, file);
+  let headers = result[0];
+  let rows = result[1];
+  console.log(`header: ${headers}`); // result with backtick` quotes
+  let i = 0;
+  for (const row of rows) {
+    console.log(`row${i++}: ${row}`);
+  }
 }
 
+// ------------------------------------------------
 //.done enf of test
 console.log("\nbye, bye\n"); // or try console.trace("my msg"); // show the callstack of modules
