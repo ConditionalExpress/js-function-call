@@ -1,0 +1,8 @@
+{
+  "headers": ["Name", "City", "Age"],
+  "rows": [
+    ["Nils", "Hamburg", "99"],
+    ["Yve", "Bonn", "55"],
+    ["Bert", "Amsterdam", "29"]
+  ]
+}
