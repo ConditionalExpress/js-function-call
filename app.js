@@ -4,6 +4,7 @@
 console.log("here we are");
 
 // open file in asynchronous way
+// return: file content
 function openFileSync() {
   console.log("open file: ", file);
   const fs = require("fs");
@@ -16,42 +17,51 @@ function openFileSync() {
   return data;
 }
 
+// open csv file and prepare csv format in array(s)
+// return: headers (is array) and rows (is arrays of array)
 function openCsvFile(file) {
   var data = openFileSync(file);
-  console.log("csv: ", data);
+  //console.log("csv: ", data);
   // prepare csv file format; e.g. in this way
   let lines = data.split("\n"); // newline
   let header = lines.shift(); // the first line is the header
   let headers = header.split(","); // split into array of headers
-  console.log(headers);
+  //console.log(headers);
+  var rowArray = new Array();
   // now do your work with the rows...
   for (const line of lines) {
-    console.log(line);
+    var obj = new Array();
+    //console.log(line);
     let rows = line.split(",");
     for (const row of rows) {
-      console.log(row);
+      obj.push(row);
+      //console.log(row);
     }
+    rowArray.push(obj);
   }
 
-  return data;
+  return [header, rowArray]; // returning multiple values
 }
-
+// open json file and prepare json format in array(s)
 function openJsonFile(file) {
   var res = openFileSync(file);
-  console.log("json: ", res);
+  //console.log("json: ", res);
   // prepare json file format; e.g. in this way
   var data = JSON.parse(res);
   let headers = data.headers; // .headers name; same as in data file
   let rows = data.rows; // dto.
-  for (let j = 0; j < headers.length; j++) {
-    console.log(headers[j]);
-  }
 
-  for (let i = 0; i < rows.length; i++)
-    for (const row of rows[i]) {
-      console.log(row);
-    }
-  return;
+  // loop over the header; only for output on terminal
+  // for (let j = 0; j < headers.length; j++) {
+  //   console.log(headers[j]);
+  // }
+
+  // // loop over all rows; only for output on terminal
+  // for (let i = 0; i < rows.length; i++)
+  //   for (const row of rows[i]) {
+  //     console.log(row);
+  //   }
+  return [headers, rows];
 }
 function callFunctionsByKey(key, file) {
   var functionList = {
@@ -61,18 +71,20 @@ function callFunctionsByKey(key, file) {
     json: function () {
       return openJsonFile(file);
     },
+    // and so on...
   };
   // test, if key is in list
   let ret = functionList.hasOwnProperty(key);
+  var result = undefined;
   if (ret) {
     // true := key found; false -> not found
     var func = functionList[key];
-    ret = func(); // call function: open...File(s) from list above
+    result = func(); // call function: open...File(s) from list above
   } else {
-    // or doing the default action
+    // or doing the default action here
     console.log("error key not in list: ", key);
   }
-  return ret;
+  return result; // returning values from call
 }
 
 // ------------------------------------------------
@@ -82,8 +94,15 @@ let file = "./data.json"; // test file with data
 let res = file.split(".");
 
 let key = res[res.length - 1]; // extension is the last occurence of this splitting
-console.log(res);
-callFunctionsByKey(key, file);
+//console.log(res);
+let result = callFunctionsByKey(key, file);
+let headers = result[0];
+let rows = result[1];
+console.log(`header: ${headers}`); // result with backtick`
+let i = 0;
+for (const row of rows) {
+  console.log(`row${i++}: ${row}`);
+}
 
 //.done enf of test
-console.log("bye, bye"); // or try console.trace("my msg"); // show the callstack of modules
+console.log("\nbye, bye\n"); // or try console.trace("my msg"); // show the callstack of modules
